@@ -1,0 +1,171 @@
+---
+title: "Hensley Flu Analysis"
+author: "Kevin McCormick"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+options(knitr.table.format = "latex") 
+library(pander)
+library(dnar)
+library(Biostrings)
+library(lattice)
+library(knitr)
+library(kableExtra)
+library(stringr)
+library(ggplot2)
+library(sqldf)
+library(xtable)
+library(dplyr)
+
+load(file="/home/kevin/projects/flu/Rimages/mutations.RData")
+
+
+recursiveRowSpec <- function(kableTable,groupInfo) {
+  for(i in 1:nrow(groupInfo)) {
+#    if(groupInfo[i,2]<groupInfo[i,3]) {
+      kableTable <- group_rows(kableTable,groupInfo[i,1],groupInfo[i,2],groupInfo[i,3],
+                               label_row_css = "border-bottom: 1px solid; text-align:left")
+#    }
+  }
+  return(kableTable)
+}
+
+createGroupInfoMetadata <- function(df, colIndex) {
+  if(!is.numeric(colIndex)) {
+    colIndex <- which(colnames(df)==colIndex)
+  }
+  mdf <-
+    do.call(rbind,lapply(unique(as.character((df %>% pull(eval(colIndex))))),
+                         function(x) {
+                           data.frame(label=as.character(x),
+                                      start=min(which(df[,colIndex]==x)),
+                                      end=max(which(df[,colIndex]==x)))
+                         }))
+  return(mdf)
+}
+
+
+varPlot <- function(df) {
+  varColors <- c("1"="#42bcf4","2"="dark blue")
+
+  df %>%
+    ggplot(aes(x = AAposition, y = VAFmean, fill = varNo)) +
+    geom_bar(position = "stack", stat = "identity", show.legend = FALSE) + theme_bw() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          axis.title.x = element_blank(),axis.title.y = element_blank()) +
+    scale_y_continuous(limits=c(0,100),breaks=round(seq(0,100,by=10),0)) +
+    scale_x_continuous(limits=c(100,250),breaks=round(seq(100,250,by=10),1)) +
+    scale_fill_manual(values=varColors) +
+    facet_grid(SampleName ~ .)
+}
+
+calcFigHeight <- function(v) {
+  return(3*length(levels(v)))
+}
+
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
+```
+
+## Project Description
+
+The purpose of this project is to identify mutations that arise at low frequency when influenza virus is passaged in the presence of human immune sera. More specifically, this project hopes to understand the differences in the types of mutations that arise when influenza is passaged with human sera with a known binding specificity for a single region on influenza surface protein, hemagglutinin, as compared to human sera without specificity.
+
+## Experimental Design
+
+The flu strain used for this experiment is A/California/07/2009(H1N1)
+
+There have been two Illumina Miseq runs thus far with samples for this project.  Both runs had paired end reads with lengths of 250+251.  The first run included:
+
+* 36 experiment libraries (12 samples of influenza virus passaged three times in the presence of human immune sera with unknown specificity for influenza hemagglutinin, sequenced in triplicate)
+* 12 control libraries (4 control samples of influenza virus grown on MDCK cells, sequenced in triplicate)
+* 6 blank libraries (6 "samples" of PCR water with Nextera kit prep)
+
+The second run included:
+
+* 33 experiment libraries (11 samples of influenza virus passaged three times in the presence of human immune sera with unknown specificity for influenza hemagglutinin, sequenced in triplicate)
+* 15 control libraries (5 control samples of influenza virus grown on MDCK cells, sequenced in triplicate)
+* 6 blank libraries (6 "samples" of PCR water with Nextera kit prep)
+
+Note that several experimental samples and one control sample was sequenced in triplicate on both sequencing runs, for a total of 6 replicates.
+
+Sample E14 was removed from downstream analysis due to sample prep error.
+
+```{r printSampleMetadata, echo=FALSE, results='asis'}
+
+rownames(sampleMetadata) <- NULL
+kt <- kable(sampleMetadata[,c("SampleID","NumReplicates","MiseqRun","Description")],
+            align=c('c','c','c','l')) %>%
+  kable_styling(bootstrap_options = c("striped", "hover","condensed"), font_size=7)
+groupInfoDf <-createGroupInfoMetadata(sampleMetadata, "SampleGroup")
+recursiveRowSpec(kt,groupInfoDf)
+```
+
+\newpage
+## Pre-processing results
+
+The table below shows the number of paired-end reads for each sample, as well as the number of reads mapping to HA using bwa:
+
+```{r printPreprocess, echo=FALSE}
+kt <- kable(pp.summary %>% select(sampleID,library,numReads,numMappedReads), format="latex",
+             align=c('c','r','c','c'),longtable=TRUE) %>%
+  kable_styling(bootstrap_options = c( "hover","condensed"),
+                latex_options = c("hold_position", "repeat_header"),
+                full_width=FALSE, position="left", font_size=7)
+groupInfoDf <- createGroupInfoMetadata(pp.summary, 'sampleGroup')
+recursiveRowSpec(kt, groupInfoDf) %>% collapse_rows(1)
+
+```
+
+\newpage
+## Mutation analysis
+
+The mapped reads for each sample were converted from .bam to .pileup format using samtools.  The tool VarScan2 was used to call variants on the .pileup format.
+
+The tables below shows all mutations in control and experimental samples that meet the following criteria:
+
+* Total read coverage at mutation position > 30
+* Variant allele (nucleotide) frequency > 1%
+* Sample depth > 5000
+    + This excludes replicates E1-1, E1-2, E1-3, E1-4, E9-2 and E10-1
+* Variant occurred in at least two replicates within sample
+
+VAFmean is the average mutation frequency across replicates.
+
+\newpage
+
+```{r printMutationTables, echo=FALSE, results='asis'}
+
+temp <- sapply(unique(variants$segment), function(X) {
+  cat("\\newpage")
+  cat("\n\n### Tables of ",X," variants\n")
+  ktOther <- kable(variants[variants$segment==X,-c(1,3,4)], format="latex", row.names = F,
+                align=c('c','c','c','c','c','c','c','c','c','r'),longtable=TRUE) %>%
+    kable_styling(bootstrap_options = c( "hover","condensed"),
+                  latex_options = c("hold_position", "repeat_header"),
+                  full_width=FALSE, position="left", font_size=7)
+  groupInfoDf <- createGroupInfoMetadata(variants[variants$segment==X,], 'sampleGroup')
+  cat(recursiveRowSpec(ktOther,groupInfoDf) %>% collapse_rows(1))
+})
+
+
+
+```
+
+\newpage
+
+### Adult Broad Antibody Experiment
+
+```{r printVariantPlots1, echo=FALSE, results="asis",fig.width=10, fig.height=calcFigHeight(HA.plotData1$SampleName)}
+HA.plotData1 %>% varPlot
+```
+
+### Adult Focused Antibody Experiment
+
+```{r printVariantPlots2, echo=FALSE, results="asis",fig.width=10, fig.height=calcFigHeight(HA.plotData2$SampleName)}
+HA.plotData2 %>% varPlot
+
+```
