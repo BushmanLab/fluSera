@@ -1,0 +1,39 @@
+SampleID	SampleName	SampleType	SampleGroup	NumReplicates	MiseqRun	SampleName	Description
+B1	B1	Blank	Blank	1	1 only	Blank sample	Blank
+B2	B2	Blank	Blank	1	1 only	Blank sample	Blank
+B3	B3	Blank	Blank	1	1 only	Blank sample	Blank
+B4	B4	Blank	Blank	1	1 only	Blank sample	Blank
+B5	B5	Blank	Blank	1	1 only	Blank sample	Blank
+B6	B6	Blank	Blank	1	1 only	Blank sample	Blank
+B7	B7	Blank	Blank	1	2 only	Blank sample	Blank
+B8	B8	Blank	Blank	1	2 only	Blank sample	Blank
+B9	B9	Blank	Blank	1	2 only	Blank sample	Blank
+B10	B10	Blank	Blank	1	2 only	Blank sample	Blank
+B11	B11	Blank	Blank	1	2 only	Blank sample	Blank
+B12	B12	Blank	Blank	1	2 only	Blank sample	Blank
+C1	C1	Control	Control	3	1 only	Cal D225G + Cal NA on PR8 int, P1.1	A/California/07/2009 grown on MDCK cells
+C2	C2	Control	Control	3	1 only	Cal D225G + Cal NA on PR8 int, P1.2	A/California/07/2009 grown on MDCK cells
+C3	C3	Control	Control	6	1 and 2	Cal D225G + Cal NA on PR8 int, P1.3	A/California/07/2009 grown on MDCK cells
+CO	CO	Control	Control	3	2 only	Cal D225G + Cal NA on PR8 int, OG	A/California/07/2009 grown in embryonated eggs
+CP	CP	Control	Control	6	2 only	Cal D225G + Cal NA on PR8 int, P3	A/California/07/2009 passaged thrice in embryonated eggs
+CV1	CV1	Control	Control	3	1 only	Cal D225G, Eight-Plasmid Mix	A/California/07/2009 HA/NA, A/Puerto Rico/8/1934 internal plasmids
+CV2	CV2	Control	Control	3	2 only	Cal D225G, Eight-Plasmid Mix	A/California/07/2009 HA/NA, A/Puerto Rico/8/1934 internal plasmids
+E1	E1	Experiment	Adult Broad Antibody	6	1 and 2	3H3167 1:10	A/California/07/2009 passaged 3X with adult sera with a broad antibody response
+E2	donor 5022	Experiment	Adult Broad Antibody	3	1 only	3H22 1:10	A/California/07/2009 passaged 3X with adult sera with a broad antibody response
+E3	E3	Experiment	Adult Broad Antibody	3	1 only	3H5132 1:40	A/California/07/2009 passaged 3X with adult sera with a broad antibody response
+E4	donor 5135	Experiment	Adult Broad Antibody	3	1 only	3H5135 1:40	A/California/07/2009 passaged 3X with adult sera with a broad antibody response
+E5	E5	Experiment	Adult Broad Antibody	3	1 only	3H5266 1:10	A/California/07/2009 passaged 3X with adult sera with a broad antibody response
+E6	donor 5308	Experiment	Adult Broad Antibody	3	1 only	3H308 1:10	A/California/07/2009 passaged 3X with adult sera with a broad antibody response
+E7	E7	Experiment	Adult Broad Antibody	3	1 only	2.3H52 1:40	A/California/07/2009 passaged 3X with adult sera with a broad antibody response
+E8	E8	Experiment	Pediatric Broad Antibody	6	1 and 2	3H4 1:160	A/California/07/2009 passaged 3X with pediatric sera with a broad antibody response
+E9	E9	Experiment	Pediatric Broad Antibody	6	1 and 2	3H4 1:160	A/California/07/2009 passaged 3X with pediatric sera with a broad antibody response
+E10	E10	Experiment	Pediatric Broad Antibody	6	1 and 2	3H12 1:160	A/California/07/2009 passaged 3X with pediatric sera with a broad antibody response
+E11	E11	Experiment	Pediatric Broad Antibody	3	1 only	3H59 1:40	A/California/07/2009 passaged 3X with pediatric sera with a broad antibody response
+E12	E12	Experiment	Pediatric Broad Antibody	3	1 only	3H68 1:40	A/California/07/2009 passaged 3X with pediatric sera with a broad antibody response
+E14	E14	Experiment	Adult Broad Antibody	3	2 only	3H3167 1:40	A/California/07/2009 passaged 3X with adult sera with a broad antibody response
+E15	donor 5008	Experiment	Adult Focused Antibody	3	2 only	2.3H08 1:10	A/California/07/2009 passaged 3X with adult sera with a focused antibody response
+E16	donor 5114	Experiment	Adult Focused Antibody	3	2 only	3H114 1:10	A/California/07/2009 passaged 3X with adult sera with a focused antibody response
+E17	E17	Experiment	Adult Focused Antibody	3	2 only	3H393 1:10	A/California/07/2009 passaged 3X with adult sera with a focused antibody response
+E18	donor 4249, replicate 1	Experiment	Adult Focused Antibody	3	2 only	2H166 1:10	A/California/07/2009 passaged 3X with adult sera with a focused antibody response
+E19	donor 4249, replicate 2	Experiment	Adult Focused Antibody	3	2 only	2.3H49 1:10	A/California/07/2009 passaged 3X with adult sera with a focused antibody response
+E20	donor 4249, replicate 3	Experiment	Adult Focused Antibody	3	2 only	3.3H49 1:10	A/California/07/2009 passaged 3X with adult sera with a focused antibody response
